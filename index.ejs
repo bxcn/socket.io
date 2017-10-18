@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Socket Test1</title>
+<script src="https://cdn.bootcss.com/socket.io/2.0.3/socket.io.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<style>
+    .chat-list-block {
+        width:50%;
+        border:1px solid #dedede;
+        margin:50px auto 0;
+        padding:10px;
+        height:360px;
+    }
+    .chat-list-block .item-block {
+        width:100%;
+        height:30px;
+        display:flex;
+        justify-content: flex-start;;
+        align-items: center;
+        font-size:14px;
+        border-bottom:1px solid #dedede;
+    }
+    .green {color:green; font-weight:bold;}
+    .red {color:red; font-weight:bold;}
+    .form-block {
+        width:50%;
+        border:1px solid #dedede;
+        margin:50px auto 0;
+        height:40px;
+        overflow:hidden;
+    }
+    input[type="text"] {
+        width:80%;
+        float:left;
+        height:40px;
+        border:none;
+        outline: none;
+        font-size:16px;
+        text-indent:10px;
+    }
+    input[type="button"] {
+        width:20%;
+        float:left;
+        height:40px;
+        border:none;
+        background-color : #f60;
+        color:#fff;
+        font-size:18px;
+        outline: none;
+        cursor:pointer;
+    }
+</style>
+<div id="chatList" class="chat-list-block">
+</div>
+<div class="form-block">
+    <input id="into" type="text">
+    <input type="button" value="Send">
+</div>
+
+<script>
+  var socket = io();
+  socket.on('connect',function(){
+    console.log("socketio open!");
+  });
+  socket.on('close',function(){
+    console.log("socketio close!");
+  });
+
+  socket.on('client', function (data) {
+    $('#chatList').append('<div class="item-block"><span class="red">Server</span>:'+ data.say+'</div>');
+  });
+
+  $('[type="button"]').click(function() {
+    var into = $('#into').val();
+    if(into.trim() == '') {
+      alert('发送消息不能为空');
+      return;
+    }
+    socket.emit('server',{say:into});
+    $('#chatList').append('<div class="item-block"><span class="green">Client</span>:'+ into +'</div>');
+    $('#into').val('');
+  })
+</script>
+
+</html>
