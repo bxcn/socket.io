@@ -61,23 +61,38 @@
   var socket = io();
   socket.on('connect',function(){
     console.log("socketio open!");
+    socket.emit('join', prompt('what is your name'));
+
   });
   socket.on('close',function(){
     console.log("socketio close!");
   });
 
-  socket.on('client', function (data) {
+  // 服务器返回消息
+  socket.on('server', function (data) {
     $('#chatList').append('<div class="item-block"><span class="red">Server</span>:'+ data.say+'</div>');
   });
 
+  // 客户端接收消息
+  socket.on('client', function (data) {
+    $('#chatList').append('<div class="item-block"><span class="red">'+ data.name+'</span>:'+ data.say+'</div>');
+  });
+
+  // 通知大家新人进来了
+  socket.on('announcement', function (data) {
+    $('#chatList').append('<div class="item-block"><span class="red">Server</span>:'+ data.say+'</div>');
+  });
+
+
+  // 发送消息
   $('[type="button"]').click(function() {
     var into = $('#into').val();
     if(into.trim() == '') {
       alert('发送消息不能为空');
       return;
     }
-    socket.emit('server',{say:into});
-    $('#chatList').append('<div class="item-block"><span class="green">Client</span>:'+ into +'</div>');
+    socket.emit('server',1, {say:into});
+    $('#chatList').append('<div class="item-block"><span class="green">我</span>:'+ into +'</div>');
     $('#into').val('');
   })
 </script>
